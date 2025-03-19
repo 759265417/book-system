@@ -1,0 +1,1935 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>图书馆借阅系统 UI 展示</title>
+  <!-- 引入样式 -->
+  <link rel="stylesheet" href="https://unpkg.com/element-ui@2.15.14/lib/theme-chalk/index.css">
+  <!-- 引入Vue和Element UI的CDN -->
+  <script src="https://unpkg.com/vue@2.6.14/dist/vue.js"></script>
+  <script src="https://unpkg.com/element-ui@2.15.14/lib/index.js"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+    }
+
+    .page-container {
+      padding: 20px;
+    }
+
+    .module-section {
+      margin-bottom: 40px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #EBEEF5;
+    }
+
+    .module-title {
+      font-size: 24px;
+      font-weight: bold;
+      margin: 20px 0;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #409EFF;
+      color: #303133;
+    }
+
+    .module-description {
+      margin-bottom: 20px;
+      color: #606266;
+    }
+
+    .component-container {
+      margin-bottom: 20px;
+      border: 1px solid #EBEEF5;
+      border-radius: 4px;
+      box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+    }
+
+    .component-header {
+      padding: 18px 20px;
+      border-bottom: 1px solid #EBEEF5;
+      background-color: #F5F7FA;
+    }
+
+    .component-title {
+      font-size: 16px;
+      font-weight: bold;
+      color: #303133;
+    }
+
+    .component-body {
+      padding: 20px;
+    }
+
+    /* 登录模块样式 */
+    .login-container {
+      width: 400px;
+      margin: 0 auto;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    .login-title {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .login-form {
+      margin-top: 20px;
+    }
+
+    .register-form {
+      margin-top: 20px;
+    }
+
+    .login-button {
+      width: 100%;
+    }
+
+    .form-footer {
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    /* 添加图书管理模块样式 */
+    .custom-tree-node {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 14px;
+      padding-right: 8px;
+    }
+
+    .avatar-uploader .el-upload {
+      border: 1px dashed #d9d9d9;
+      border-radius: 6px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .avatar-uploader .el-upload:hover {
+      border-color: #409EFF;
+    }
+
+    .avatar-uploader-icon {
+      font-size: 28px;
+      color: #8c939d;
+      width: 178px;
+      height: 178px;
+      line-height: 178px;
+      text-align: center;
+    }
+
+    .avatar {
+      width: 178px;
+      height: 178px;
+      display: block;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app">
+    <el-container>
+      <el-header
+        style="height: 60px; background-color: #409EFF; color: white; display: flex; align-items: center; justify-content: space-between;">
+        <div style="display: flex; align-items: center;">
+          <h2 style="margin: 0;">图书馆借阅系统 UI 展示</h2>
+        </div>
+      </el-header>
+
+      <el-main>
+        <div class="page-container">
+          <h1>图书馆借阅系统 UI 组件展示</h1>
+          <p>本页面展示了使用 Element UI 实现的图书馆借阅系统各个模块的 UI 组件。</p>
+
+          <!-- 用户模块 - 登录/注册 -->
+          <div class="module-section">
+            <h2 class="module-title">用户模块 - 登录/注册</h2>
+            <p class="module-description">用户可以通过此模块进行账号登录和注册。</p>
+
+            <div class="component-container">
+              <div class="component-header">
+                <h3 class="component-title">登录和注册表单</h3>
+              </div>
+              <div class="component-body">
+                <div class="login-container">
+                  <el-tabs v-model="activeTab">
+                    <el-tab-pane label="登录" name="login">
+                      <el-form :model="loginForm" ref="loginForm" :rules="loginRules" label-width="80px"
+                        class="login-form">
+                        <el-form-item label="用户名" prop="username">
+                          <el-input v-model="loginForm.username" prefix-icon="el-icon-user"></el-input>
+                        </el-form-item>
+                        <el-form-item label="密码" prop="password">
+                          <el-input v-model="loginForm.password" type="password" prefix-icon="el-icon-lock"></el-input>
+                        </el-form-item>
+                        <el-form-item>
+                          <el-button type="primary" class="login-button" @click="handleLogin">登录</el-button>
+                        </el-form-item>
+                        <div class="form-footer">
+                          <el-button type="text" @click="activeTab = 'register'">还没有账号？立即注册</el-button>
+                          <el-button type="text">忘记密码</el-button>
+                        </div>
+                      </el-form>
+                    </el-tab-pane>
+                    <el-tab-pane label="注册" name="register">
+                      <el-form :model="registerForm" ref="registerForm" :rules="registerRules" label-width="100px"
+                        class="register-form">
+                        <el-form-item label="用户名" prop="username">
+                          <el-input v-model="registerForm.username" prefix-icon="el-icon-user"></el-input>
+                        </el-form-item>
+                        <el-form-item label="姓名" prop="name">
+                          <el-input v-model="registerForm.name"></el-input>
+                        </el-form-item>
+                        <el-form-item label="学号/工号" prop="studentId">
+                          <el-input v-model="registerForm.studentId"></el-input>
+                        </el-form-item>
+                        <el-form-item label="邮箱" prop="email">
+                          <el-input v-model="registerForm.email" prefix-icon="el-icon-message"></el-input>
+                        </el-form-item>
+                        <el-form-item label="手机号码" prop="phone">
+                          <el-input v-model="registerForm.phone" prefix-icon="el-icon-mobile-phone"></el-input>
+                        </el-form-item>
+                        <el-form-item label="密码" prop="password">
+                          <el-input v-model="registerForm.password" type="password"
+                            prefix-icon="el-icon-lock"></el-input>
+                        </el-form-item>
+                        <el-form-item label="确认密码" prop="confirmPassword">
+                          <el-input v-model="registerForm.confirmPassword" type="password"
+                            prefix-icon="el-icon-lock"></el-input>
+                        </el-form-item>
+                        <el-form-item label="用户类型" prop="userType">
+                          <el-select v-model="registerForm.userType" placeholder="请选择用户类型" style="width: 100%;">
+                            <el-option label="学生" value="student"></el-option>
+                            <el-option label="教师" value="teacher"></el-option>
+                            <el-option label="其他" value="other"></el-option>
+                          </el-select>
+                        </el-form-item>
+                        <el-form-item>
+                          <el-button type="primary" class="login-button" @click="handleRegister">注册</el-button>
+                        </el-form-item>
+                        <div class="form-footer">
+                          <el-button type="text" @click="activeTab = 'login'">已有账号？立即登录</el-button>
+                        </div>
+                      </el-form>
+                    </el-tab-pane>
+                  </el-tabs>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 图书搜索模块 -->
+          <div class="module-section">
+            <h2 class="module-title">图书搜索模块</h2>
+            <p class="module-description">用户可以通过此模块搜索和浏览图书馆藏书。</p>
+
+            <div class="component-container">
+              <div class="component-header">
+                <h3 class="component-title">快速搜索</h3>
+              </div>
+              <div class="component-body">
+                <el-form :inline="true" :model="searchForm" class="demo-form-inline">
+                  <el-form-item>
+                    <el-input v-model="searchForm.keyword" placeholder="请输入关键词" prefix-icon="el-icon-search"
+                      style="width: 300px;"></el-input>
+                  </el-form-item>
+                  <el-form-item>
+                    <el-select v-model="searchForm.searchType" placeholder="选择搜索类型" style="width: 150px;">
+                      <el-option label="全部" value="all"></el-option>
+                      <el-option label="书名" value="title"></el-option>
+                      <el-option label="作者" value="author"></el-option>
+                      <el-option label="ISBN" value="isbn"></el-option>
+                      <el-option label="出版社" value="publisher"></el-option>
+                    </el-select>
+                  </el-form-item>
+                  <el-form-item>
+                    <el-button type="primary" @click="handleSearch">搜索</el-button>
+                    <el-button type="text" @click="advancedSearchVisible = true">高级搜索</el-button>
+                  </el-form-item>
+                </el-form>
+              </div>
+            </div>
+
+            <div class="component-container">
+              <div class="component-header">
+                <h3 class="component-title">高级搜索</h3>
+              </div>
+              <div class="component-body">
+                <el-collapse-transition>
+                  <div v-show="advancedSearchVisible">
+                    <el-form :model="advancedSearchForm" label-width="100px">
+                      <el-row :gutter="20">
+                        <el-col :span="8">
+                          <el-form-item label="书名">
+                            <el-input v-model="advancedSearchForm.title" placeholder="请输入书名"></el-input>
+                          </el-form-item>
+                        </el-col>
+                        <el-col :span="8">
+                          <el-form-item label="作者">
+                            <el-input v-model="advancedSearchForm.author" placeholder="请输入作者"></el-input>
+                          </el-form-item>
+                        </el-col>
+                        <el-col :span="8">
+                          <el-form-item label="ISBN">
+                            <el-input v-model="advancedSearchForm.isbn" placeholder="请输入ISBN"></el-input>
+                          </el-form-item>
+                        </el-col>
+                      </el-row>
+                      <el-row :gutter="20">
+                        <el-col :span="8">
+                          <el-form-item label="出版社">
+                            <el-input v-model="advancedSearchForm.publisher" placeholder="请输入出版社"></el-input>
+                          </el-form-item>
+                        </el-col>
+                        <el-col :span="8">
+                          <el-form-item label="分类">
+                            <el-select v-model="advancedSearchForm.category" placeholder="请选择分类" style="width: 100%;">
+                              <el-option label="文学" value="literature"></el-option>
+                              <el-option label="科学" value="science"></el-option>
+                              <el-option label="艺术" value="art"></el-option>
+                              <el-option label="历史" value="history"></el-option>
+                              <el-option label="计算机" value="computer"></el-option>
+                              <el-option label="经济" value="economy"></el-option>
+                            </el-select>
+                          </el-form-item>
+                        </el-col>
+                        <el-col :span="8">
+                          <el-form-item label="出版日期">
+                            <el-date-picker v-model="advancedSearchForm.publishDateRange" type="daterange"
+                              range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" style="width: 100%;">
+                            </el-date-picker>
+                          </el-form-item>
+                        </el-col>
+                      </el-row>
+                      <el-row :gutter="20">
+                        <el-col :span="8">
+                          <el-form-item label="馆藏状态">
+                            <el-select v-model="advancedSearchForm.status" placeholder="请选择馆藏状态" style="width: 100%;">
+                              <el-option label="全部" value="all"></el-option>
+                              <el-option label="可借阅" value="available"></el-option>
+                              <el-option label="借出" value="borrowed"></el-option>
+                              <el-option label="预约中" value="reserved"></el-option>
+                            </el-select>
+                          </el-form-item>
+                        </el-col>
+                      </el-row>
+                      <el-form-item>
+                        <el-button type="primary" @click="handleAdvancedSearch">搜索</el-button>
+                        <el-button @click="resetAdvancedSearchForm">重置</el-button>
+                        <el-button @click="advancedSearchVisible = false">收起</el-button>
+                      </el-form-item>
+                    </el-form>
+                  </div>
+                </el-collapse-transition>
+              </div>
+            </div>
+
+            <div class="component-container">
+              <div class="component-header">
+                <h3 class="component-title">搜索结果</h3>
+              </div>
+              <div class="component-body">
+                <el-table :data="bookList" style="width: 100%" :stripe="true" :border="true">
+                  <el-table-column type="index" width="50"></el-table-column>
+                  <el-table-column prop="title" label="书名" min-width="180">
+                    <template slot-scope="scope">
+                      <el-button type="text" @click="viewBookDetail(scope.row)">{{ scope.row.title }}</el-button>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="author" label="作者" width="150"></el-table-column>
+                  <el-table-column prop="isbn" label="ISBN" width="150"></el-table-column>
+                  <el-table-column prop="publisher" label="出版社" width="150"></el-table-column>
+                  <el-table-column prop="category" label="分类" width="100"></el-table-column>
+                  <el-table-column prop="publishDate" label="出版日期" width="120"></el-table-column>
+                  <el-table-column prop="status" label="状态" width="100">
+                    <template slot-scope="scope">
+                      <el-tag :type="getStatusType(scope.row.status)">{{ scope.row.status }}</el-tag>
+                    </template>
+                  </el-table-column>
+                  <el-table-column label="操作" width="150">
+                    <template slot-scope="scope">
+                      <el-button size="mini" type="primary" :disabled="scope.row.status !== '可借阅'"
+                        @click="handleBorrow(scope.row)">借阅</el-button>
+                      <el-button size="mini" :disabled="scope.row.status !== '借出'"
+                        @click="handleReserve(scope.row)">预约</el-button>
+                    </template>
+                  </el-table-column>
+                </el-table>
+                <div style="margin-top: 20px; text-align: center;">
+                  <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
+                    :current-page="pagination.currentPage" :page-sizes="[10, 20, 30, 50]"
+                    :page-size="pagination.pageSize" layout="total, sizes, prev, pager, next, jumper"
+                    :total="pagination.total">
+                  </el-pagination>
+                </div>
+              </div>
+            </div>
+
+            <!-- 图书详情对话框 -->
+            <el-dialog title="图书详情" :visible.sync="bookDetailDialogVisible" width="60%">
+              <el-row :gutter="20">
+                <el-col :span="8">
+                  <div style="text-align: center;">
+                    <img :src="currentBook.cover || 'https://via.placeholder.com/200x280'"
+                      style="max-width: 200px; max-height: 280px; box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);">
+                  </div>
+                </el-col>
+                <el-col :span="16">
+                  <el-descriptions title="" :column="1" border>
+                    <el-descriptions-item label="书名">{{ currentBook.title }}</el-descriptions-item>
+                    <el-descriptions-item label="作者">{{ currentBook.author }}</el-descriptions-item>
+                    <el-descriptions-item label="ISBN">{{ currentBook.isbn }}</el-descriptions-item>
+                    <el-descriptions-item label="出版社">{{ currentBook.publisher }}</el-descriptions-item>
+                    <el-descriptions-item label="出版日期">{{ currentBook.publishDate }}</el-descriptions-item>
+                    <el-descriptions-item label="分类">{{ currentBook.category }}</el-descriptions-item>
+                    <el-descriptions-item label="馆藏位置">{{ currentBook.location }}</el-descriptions-item>
+                    <el-descriptions-item label="馆藏数量">{{ currentBook.totalCount }}</el-descriptions-item>
+                    <el-descriptions-item label="可借数量">{{ currentBook.availableCount }}</el-descriptions-item>
+                    <el-descriptions-item label="状态">
+                      <el-tag :type="getStatusType(currentBook.status)">{{ currentBook.status }}</el-tag>
+                    </el-descriptions-item>
+                  </el-descriptions>
+                </el-col>
+              </el-row>
+              <div style="margin-top: 20px;">
+                <el-divider content-position="left">图书简介</el-divider>
+                <p style="text-indent: 2em; line-height: 1.8;">{{ currentBook.description }}</p>
+              </div>
+              <span slot="footer" class="dialog-footer">
+                <el-button @click="bookDetailDialogVisible = false">关闭</el-button>
+                <el-button type="primary" :disabled="currentBook.status !== '可借阅'"
+                  @click="handleBorrow(currentBook)">借阅</el-button>
+                <el-button type="warning" :disabled="currentBook.status !== '借出'"
+                  @click="handleReserve(currentBook)">预约</el-button>
+              </span>
+            </el-dialog>
+          </div>
+
+          <!-- 借阅管理模块 -->
+          <div class="module-section">
+            <h2 class="module-title">借阅管理模块</h2>
+            <p class="module-description">管理图书的借阅、归还、续借和预约等操作。</p>
+
+            <div class="component-container">
+              <div class="component-header">
+                <h3 class="component-title">借阅记录</h3>
+              </div>
+              <div class="component-body">
+                <el-tabs v-model="borrowTabActive">
+                  <el-tab-pane label="当前借阅" name="current">
+                    <el-table :data="currentBorrowList" style="width: 100%" :stripe="true" :border="true">
+                      <el-table-column type="index" width="50"></el-table-column>
+                      <el-table-column prop="bookTitle" label="书名" min-width="180"></el-table-column>
+                      <el-table-column prop="borrowDate" label="借阅日期" width="120"></el-table-column>
+                      <el-table-column prop="dueDate" label="应还日期" width="120"></el-table-column>
+                      <el-table-column prop="remainingDays" label="剩余天数" width="100">
+                        <template slot-scope="scope">
+                          <el-tag :type="getRemainingDaysType(scope.row.remainingDays)">{{ scope.row.remainingDays
+                            }}天</el-tag>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="renewCount" label="续借次数" width="100"></el-table-column>
+                      <el-table-column label="操作" width="200">
+                        <template slot-scope="scope">
+                          <el-button size="mini" type="primary" :disabled="scope.row.renewCount >= 2"
+                            @click="handleRenew(scope.row)">续借</el-button>
+                          <el-button size="mini" type="success" @click="handleReturn(scope.row)">归还</el-button>
+                        </template>
+                      </el-table-column>
+                    </el-table>
+                  </el-tab-pane>
+                  <el-tab-pane label="借阅历史" name="history">
+                    <el-table :data="borrowHistoryList" style="width: 100%" :stripe="true" :border="true">
+                      <el-table-column type="index" width="50"></el-table-column>
+                      <el-table-column prop="bookTitle" label="书名" min-width="180"></el-table-column>
+                      <el-table-column prop="borrowDate" label="借阅日期" width="120"></el-table-column>
+                      <el-table-column prop="returnDate" label="归还日期" width="120"></el-table-column>
+                      <el-table-column prop="status" label="状态" width="100">
+                        <template slot-scope="scope">
+                          <el-tag :type="getBorrowStatusType(scope.row.status)">{{ scope.row.status }}</el-tag>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="overdueDays" label="逾期天数" width="100">
+                        <template slot-scope="scope">
+                          <span v-if="scope.row.overdueDays > 0" style="color: #F56C6C;">{{ scope.row.overdueDays
+                            }}天</span>
+                          <span v-else>0天</span>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="fine" label="罚款" width="100">
+                        <template slot-scope="scope">
+                          <span v-if="scope.row.fine > 0" style="color: #F56C6C;">￥{{ scope.row.fine.toFixed(2)
+                            }}</span>
+                          <span v-else>￥0.00</span>
+                        </template>
+                      </el-table-column>
+                    </el-table>
+                  </el-tab-pane>
+                  <el-tab-pane label="预约记录" name="reservation">
+                    <el-table :data="reservationList" style="width: 100%" :stripe="true" :border="true">
+                      <el-table-column type="index" width="50"></el-table-column>
+                      <el-table-column prop="bookTitle" label="书名" min-width="180"></el-table-column>
+                      <el-table-column prop="reservationDate" label="预约日期" width="120"></el-table-column>
+                      <el-table-column prop="availableDate" label="可借日期" width="120"></el-table-column>
+                      <el-table-column prop="status" label="状态" width="120">
+                        <template slot-scope="scope">
+                          <el-tag :type="getReservationStatusType(scope.row.status)">{{ scope.row.status }}</el-tag>
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="validDays" label="有效期" width="100">
+                        <template slot-scope="scope">
+                          <span v-if="scope.row.status === '可借阅'"><b>{{ scope.row.validDays }}天</b></span>
+                          <span v-else>{{ scope.row.validDays }}天</span>
+                        </template>
+                      </el-table-column>
+                      <el-table-column label="操作" width="150">
+                        <template slot-scope="scope">
+                          <el-button size="mini" type="primary" :disabled="scope.row.status !== '可借阅'"
+                            @click="handleBorrowReserved(scope.row)">借阅</el-button>
+                          <el-button size="mini" type="danger" :disabled="scope.row.status === '已过期'"
+                            @click="handleCancelReservation(scope.row)">取消</el-button>
+                        </template>
+                      </el-table-column>
+                    </el-table>
+                  </el-tab-pane>
+                </el-tabs>
+
+                <div style="margin-top: 20px; text-align: center;">
+                  <el-pagination @size-change="handleBorrowSizeChange" @current-change="handleBorrowCurrentChange"
+                    :current-page="borrowPagination.currentPage" :page-sizes="[5, 10, 20, 30]"
+                    :page-size="borrowPagination.pageSize" layout="total, sizes, prev, pager, next, jumper"
+                    :total="borrowPagination.total">
+                  </el-pagination>
+                </div>
+              </div>
+            </div>
+
+            <!-- 借书操作 -->
+            <div class="component-container">
+              <div class="component-header">
+                <h3 class="component-title">借书操作</h3>
+              </div>
+              <div class="component-body">
+                <el-form :inline="true" :model="borrowForm" class="demo-form-inline">
+                  <el-form-item label="ISBN/条码">
+                    <el-input v-model="borrowForm.code" placeholder="请扫描或输入图书ISBN/条码" style="width: 300px;"></el-input>
+                  </el-form-item>
+                  <el-form-item>
+                    <el-button type="primary" @click="handleScanBorrow">扫码借书</el-button>
+                  </el-form-item>
+                </el-form>
+
+                <el-divider content-position="left">借阅规则</el-divider>
+                <el-alert title="借阅规则说明" type="info"
+                  description="1. 每人最多可借阅10本图书；2. 借阅期限为30天；3. 每本图书最多可续借2次，每次续借15天；4. 逾期归还将产生罚款，每天0.5元/本；5. 图书损坏或丢失需要按价赔偿。"
+                  :closable="false" show-icon>
+                </el-alert>
+              </div>
+            </div>
+
+            <!-- 还书操作 -->
+            <div class="component-container">
+              <div class="component-header">
+                <h3 class="component-title">还书操作</h3>
+              </div>
+              <div class="component-body">
+                <el-form :inline="true" :model="returnForm" class="demo-form-inline">
+                  <el-form-item label="ISBN/条码">
+                    <el-input v-model="returnForm.code" placeholder="请扫描或输入图书ISBN/条码" style="width: 300px;"></el-input>
+                  </el-form-item>
+                  <el-form-item>
+                    <el-button type="success" @click="handleScanReturn">扫码还书</el-button>
+                  </el-form-item>
+                </el-form>
+
+                <el-divider content-position="left">图书状态</el-divider>
+                <el-form :model="bookDamageForm" label-width="120px">
+                  <el-form-item label="图书状态">
+                    <el-radio-group v-model="bookDamageForm.status">
+                      <el-radio label="normal">正常</el-radio>
+                      <el-radio label="slight">轻微损坏</el-radio>
+                      <el-radio label="serious">严重损坏</el-radio>
+                      <el-radio label="lost">丢失</el-radio>
+                    </el-radio-group>
+                  </el-form-item>
+                  <el-form-item label="损坏描述" v-if="bookDamageForm.status !== 'normal'">
+                    <el-input type="textarea" v-model="bookDamageForm.description" placeholder="请描述图书损坏情况"></el-input>
+                  </el-form-item>
+                </el-form>
+              </div>
+            </div>
+          </div>
+
+          <!-- 图书管理模块 -->
+          <div class="module-section">
+            <h2 class="module-title">图书管理模块（管理员）</h2>
+            <p class="module-description">管理员可以通过此模块对图书进行添加、编辑和下架等操作。</p>
+
+            <div class="component-container">
+              <div class="component-header">
+                <h3 class="component-title">图书管理</h3>
+              </div>
+              <div class="component-body">
+                <div style="margin-bottom: 20px;">
+                  <el-button type="primary" @click="handleAddBook">添加图书</el-button>
+                  <el-button type="danger" :disabled="selectedBooks.length === 0"
+                    @click="handleBatchDelete">批量下架</el-button>
+                </div>
+
+                <el-form :inline="true" :model="bookManageSearchForm" class="demo-form-inline">
+                  <el-form-item>
+                    <el-input v-model="bookManageSearchForm.keyword" placeholder="请输入图书名称或ISBN"
+                      style="width: 250px;"></el-input>
+                  </el-form-item>
+                  <el-form-item>
+                    <el-select v-model="bookManageSearchForm.category" placeholder="选择分类" style="width: 150px;">
+                      <el-option label="全部" value=""></el-option>
+                      <el-option label="文学" value="literature"></el-option>
+                      <el-option label="科学" value="science"></el-option>
+                      <el-option label="艺术" value="art"></el-option>
+                      <el-option label="历史" value="history"></el-option>
+                      <el-option label="计算机" value="computer"></el-option>
+                      <el-option label="经济" value="economy"></el-option>
+                    </el-select>
+                  </el-form-item>
+                  <el-form-item>
+                    <el-select v-model="bookManageSearchForm.status" placeholder="图书状态" style="width: 120px;">
+                      <el-option label="全部" value=""></el-option>
+                      <el-option label="上架" value="active"></el-option>
+                      <el-option label="下架" value="inactive"></el-option>
+                    </el-select>
+                  </el-form-item>
+                  <el-form-item>
+                    <el-button type="primary" @click="handleSearchBooks">搜索</el-button>
+                    <el-button @click="resetBookManageSearchForm">重置</el-button>
+                  </el-form-item>
+                </el-form>
+
+                <el-table :data="manageBookList" style="width: 100%" :stripe="true" :border="true"
+                  @selection-change="handleSelectionChange">
+                  <el-table-column type="selection" width="55"></el-table-column>
+                  <el-table-column type="index" width="50" label="序号"></el-table-column>
+                  <el-table-column prop="title" label="书名" min-width="180"></el-table-column>
+                  <el-table-column prop="author" label="作者" width="150"></el-table-column>
+                  <el-table-column prop="isbn" label="ISBN" width="150"></el-table-column>
+                  <el-table-column prop="publisher" label="出版社" width="150"></el-table-column>
+                  <el-table-column prop="publishDate" label="出版日期" width="120"></el-table-column>
+                  <el-table-column prop="category" label="分类" width="100"></el-table-column>
+                  <el-table-column prop="totalCount" label="馆藏数量" width="100"></el-table-column>
+                  <el-table-column prop="availableCount" label="可借数量" width="100"></el-table-column>
+                  <el-table-column prop="status" label="状态" width="80">
+                    <template slot-scope="scope">
+                      <el-switch v-model="scope.row.status" active-color="#13ce66" inactive-color="#ff4949"
+                        active-value="active" inactive-value="inactive" active-text="上架" inactive-text="下架"
+                        @change="handleStatusChange(scope.row)">
+                      </el-switch>
+                    </template>
+                  </el-table-column>
+                  <el-table-column label="操作" width="150" fixed="right">
+                    <template slot-scope="scope">
+                      <el-button size="mini" type="primary" @click="handleEditBook(scope.row)">编辑</el-button>
+                      <el-button size="mini" type="danger" @click="handleDeleteBook(scope.row)">下架</el-button>
+                    </template>
+                  </el-table-column>
+                </el-table>
+
+                <div style="margin-top: 20px; text-align: center;">
+                  <el-pagination @size-change="handleManageBookSizeChange"
+                    @current-change="handleManageBookCurrentChange" :current-page="manageBookPagination.currentPage"
+                    :page-sizes="[10, 20, 30, 50]" :page-size="manageBookPagination.pageSize"
+                    layout="total, sizes, prev, pager, next, jumper" :total="manageBookPagination.total">
+                  </el-pagination>
+                </div>
+              </div>
+            </div>
+
+            <!-- 图书分类管理 -->
+            <div class="component-container">
+              <div class="component-header">
+                <h3 class="component-title">图书分类管理</h3>
+              </div>
+              <div class="component-body">
+                <el-row :gutter="20">
+                  <el-col :span="8">
+                    <div style="margin-bottom: 20px;">
+                      <el-button type="primary" @click="handleAddCategory">添加分类</el-button>
+                    </div>
+                    <el-tree :data="categoryTree" :props="defaultProps" node-key="id" default-expand-all
+                      :expand-on-click-node="false">
+                      <span class="custom-tree-node" slot-scope="{ node, data }">
+                        <span>{{ node.label }}</span>
+                        <span>
+                          <el-button type="text" size="mini" @click="() => handleAddSubCategory(data)">
+                            添加子分类
+                          </el-button>
+                          <el-button type="text" size="mini" @click="() => handleEditCategory(data)">
+                            编辑
+                          </el-button>
+                          <el-button type="text" size="mini" @click="() => handleRemoveCategory(node, data)">
+                            删除
+                          </el-button>
+                        </span>
+                      </span>
+                    </el-tree>
+                  </el-col>
+                  <el-col :span="16">
+                    <el-table :data="categoryList" style="width: 100%" :stripe="true" :border="true">
+                      <el-table-column type="index" width="50" label="序号"></el-table-column>
+                      <el-table-column prop="name" label="分类名称" min-width="120"></el-table-column>
+                      <el-table-column prop="code" label="分类代码" width="150"></el-table-column>
+                      <el-table-column prop="count" label="图书数量" width="120"></el-table-column>
+                      <el-table-column prop="parentName" label="上级分类" width="120"></el-table-column>
+                      <el-table-column prop="description" label="描述" min-width="180"></el-table-column>
+                      <el-table-column label="操作" width="180">
+                        <template slot-scope="scope">
+                          <el-button size="mini" type="primary" @click="handleEditCategory(scope.row)">编辑</el-button>
+                          <el-button size="mini" type="danger"
+                            @click="handleRemoveCategoryFromTable(scope.row)">删除</el-button>
+                        </template>
+                      </el-table-column>
+                    </el-table>
+                  </el-col>
+                </el-row>
+              </div>
+            </div>
+
+            <!-- 图书编辑对话框 -->
+            <el-dialog :title="bookForm.id ? '编辑图书' : '添加图书'" :visible.sync="bookDialogVisible" width="50%">
+              <el-form ref="bookForm" :model="bookForm" :rules="bookRules" label-width="100px">
+                <el-row :gutter="20">
+                  <el-col :span="12">
+                    <el-form-item label="书名" prop="title">
+                      <el-input v-model="bookForm.title"></el-input>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="12">
+                    <el-form-item label="ISBN" prop="isbn">
+                      <el-input v-model="bookForm.isbn"></el-input>
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+                <el-row :gutter="20">
+                  <el-col :span="12">
+                    <el-form-item label="作者" prop="author">
+                      <el-input v-model="bookForm.author"></el-input>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="12">
+                    <el-form-item label="出版社" prop="publisher">
+                      <el-input v-model="bookForm.publisher"></el-input>
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+                <el-row :gutter="20">
+                  <el-col :span="12">
+                    <el-form-item label="出版日期" prop="publishDate">
+                      <el-date-picker v-model="bookForm.publishDate" type="date" placeholder="选择日期"
+                        style="width: 100%;">
+                      </el-date-picker>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="12">
+                    <el-form-item label="分类" prop="category">
+                      <el-select v-model="bookForm.category" placeholder="请选择分类" style="width: 100%;">
+                        <el-option label="文学" value="literature"></el-option>
+                        <el-option label="科学" value="science"></el-option>
+                        <el-option label="艺术" value="art"></el-option>
+                        <el-option label="历史" value="history"></el-option>
+                        <el-option label="计算机" value="computer"></el-option>
+                        <el-option label="经济" value="economy"></el-option>
+                      </el-select>
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+                <el-row :gutter="20">
+                  <el-col :span="12">
+                    <el-form-item label="馆藏数量" prop="totalCount">
+                      <el-input-number v-model="bookForm.totalCount" :min="0" :max="999"
+                        style="width: 100%;"></el-input-number>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="12">
+                    <el-form-item label="馆藏位置" prop="location">
+                      <el-input v-model="bookForm.location"></el-input>
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+                <el-form-item label="简介" prop="description">
+                  <el-input type="textarea" v-model="bookForm.description" :rows="4"></el-input>
+                </el-form-item>
+                <el-form-item label="图书封面">
+                  <el-upload class="avatar-uploader" action="/api/upload" :show-file-list="false"
+                    :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
+                    <img v-if="bookForm.cover" :src="bookForm.cover" class="avatar">
+                    <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                  </el-upload>
+                </el-form-item>
+              </el-form>
+              <span slot="footer" class="dialog-footer">
+                <el-button @click="bookDialogVisible = false">取 消</el-button>
+                <el-button type="primary" @click="submitBookForm">确 定</el-button>
+              </span>
+            </el-dialog>
+
+            <!-- 分类编辑对话框 -->
+            <el-dialog :title="categoryForm.id ? '编辑分类' : '添加分类'" :visible.sync="categoryDialogVisible" width="30%">
+              <el-form ref="categoryForm" :model="categoryForm" :rules="categoryRules" label-width="80px">
+                <el-form-item label="名称" prop="name">
+                  <el-input v-model="categoryForm.name"></el-input>
+                </el-form-item>
+                <el-form-item label="代码" prop="code">
+                  <el-input v-model="categoryForm.code"></el-input>
+                </el-form-item>
+                <el-form-item label="上级分类" prop="parentId">
+                  <el-select v-model="categoryForm.parentId" placeholder="请选择上级分类" style="width: 100%;">
+                    <el-option label="无（顶级分类）" :value="0"></el-option>
+                    <el-option v-for="item in categoryOptions" :key="item.id" :label="item.name" :value="item.id">
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+                <el-form-item label="描述" prop="description">
+                  <el-input type="textarea" v-model="categoryForm.description" :rows="3"></el-input>
+                </el-form-item>
+              </el-form>
+              <span slot="footer" class="dialog-footer">
+                <el-button @click="categoryDialogVisible = false">取 消</el-button>
+                <el-button type="primary" @click="submitCategoryForm">确 定</el-button>
+              </span>
+            </el-dialog>
+          </div>
+        </div>
+      </el-main>
+    </el-container>
+  </div>
+
+  <script>
+    new Vue({
+      el: '#app',
+      data() {
+        // 密码验证规则
+        const validatePassword = (rule, value, callback) => {
+          if (value === '') {
+            callback(new Error('请输入密码'));
+          } else {
+            if (this.registerForm.confirmPassword !== '') {
+              this.$refs.registerForm.validateField('confirmPassword');
+            }
+            callback();
+          }
+        };
+        // 确认密码验证规则
+        const validateConfirmPassword = (rule, value, callback) => {
+          if (value === '') {
+            callback(new Error('请再次输入密码'));
+          } else if (value !== this.registerForm.password) {
+            callback(new Error('两次输入密码不一致!'));
+          } else {
+            callback();
+          }
+        };
+
+        return {
+          // 登录/注册相关数据
+          activeTab: 'login',
+          loginForm: {
+            username: '',
+            password: ''
+          },
+          registerForm: {
+            username: '',
+            name: '',
+            studentId: '',
+            email: '',
+            phone: '',
+            password: '',
+            confirmPassword: '',
+            userType: ''
+          },
+          loginRules: {
+            username: [
+              { required: true, message: '请输入用户名', trigger: 'blur' },
+              { min: 3, max: 20, message: '长度在 3 到 20 个字符', trigger: 'blur' }
+            ],
+            password: [
+              { required: true, message: '请输入密码', trigger: 'blur' },
+              { min: 6, max: 20, message: '长度在 6 到 20 个字符', trigger: 'blur' }
+            ]
+          },
+          registerRules: {
+            username: [
+              { required: true, message: '请输入用户名', trigger: 'blur' },
+              { min: 3, max: 20, message: '长度在 3 到 20 个字符', trigger: 'blur' }
+            ],
+            name: [
+              { required: true, message: '请输入姓名', trigger: 'blur' }
+            ],
+            studentId: [
+              { required: true, message: '请输入学号/工号', trigger: 'blur' }
+            ],
+            email: [
+              { required: true, message: '请输入邮箱地址', trigger: 'blur' },
+              { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }
+            ],
+            phone: [
+              { required: true, message: '请输入手机号码', trigger: 'blur' },
+              { pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号码', trigger: 'blur' }
+            ],
+            password: [
+              { required: true, message: '请输入密码', trigger: 'blur' },
+              { min: 6, max: 20, message: '长度在 6 到 20 个字符', trigger: 'blur' },
+              { validator: validatePassword, trigger: 'blur' }
+            ],
+            confirmPassword: [
+              { required: true, message: '请再次输入密码', trigger: 'blur' },
+              { validator: validateConfirmPassword, trigger: 'blur' }
+            ],
+            userType: [
+              { required: true, message: '请选择用户类型', trigger: 'change' }
+            ]
+          },
+
+          // 图书搜索相关数据
+          searchForm: {
+            keyword: '',
+            searchType: 'all'
+          },
+          advancedSearchVisible: false,
+          advancedSearchForm: {
+            title: '',
+            author: '',
+            isbn: '',
+            publisher: '',
+            category: '',
+            publishDateRange: '',
+            status: 'all'
+          },
+          pagination: {
+            currentPage: 1,
+            pageSize: 10,
+            total: 100
+          },
+          bookList: [
+            {
+              id: 1,
+              title: '人工智能：一种现代方法（第4版）',
+              author: 'Stuart Russell, Peter Norvig',
+              isbn: '9787302518287',
+              publisher: '清华大学出版社',
+              publishDate: '2021-03-01',
+              category: '计算机',
+              location: 'A区-12排-3层',
+              totalCount: 10,
+              availableCount: 5,
+              status: '可借阅',
+              cover: 'https://img3.doubanio.com/view/subject/s/public/s33549553.jpg',
+              description: '《人工智能：一种现代方法（第4版）》是最权威、最经典的人工智能教材，被全球1500多所大学用作教材，被译为12种语言，被誉为"AI圣经"。《人工智能：一种现代方法（第4版）》全面介绍了人工智能的理论和实践，讲述了人工智能如何应用于现实世界。本书共分为7部分27章，包括人工智能的基础知识、问题求解、知识与推理、不确定知识和推理、学习、通信感知和行动、结论等内容。第4版在第3版的基础上，针对人工智能领域的最新进展做了全面更新。内容涵盖了机器学习的深度学习方法、概率编程、多智能体系统、概率图模型的规模化应用等。'
+            },
+            {
+              id: 2,
+              title: '百年孤独',
+              author: '加西亚·马尔克斯',
+              isbn: '9787544291170',
+              publisher: '南海出版公司',
+              publishDate: '2017-07-01',
+              category: '文学',
+              location: 'B区-5排-2层',
+              totalCount: 15,
+              availableCount: 0,
+              status: '借出',
+              cover: 'https://img2.doubanio.com/view/subject/s/public/s27237850.jpg',
+              description: '《百年孤独》是魔幻现实主义文学的代表作，描写了布恩迪亚家族七代人的传奇故事，以及加勒比海沿岸小镇马孔多的百年兴衰，融入了拉丁美洲一个世纪以来风云变幻的历史。作品结构狂放，时空错置，充满神话传说色彩，人物命运厚重悲壮，文笔瑰丽多彩，是20世纪最重要的经典文学巨著之一。1982年加西亚·马尔克斯获得诺贝尔文学奖，奠定世界级文学巨匠的地位，很大程度上即归功于《百年孤独》的巨大影响力。'
+            },
+            {
+              id: 3,
+              title: '三体',
+              author: '刘慈欣',
+              isbn: '9787536692930',
+              publisher: '重庆出版社',
+              publishDate: '2008-01-01',
+              category: '科学',
+              location: 'C区-3排-1层',
+              totalCount: 20,
+              availableCount: 8,
+              status: '可借阅',
+              cover: 'https://img1.doubanio.com/view/subject/s/public/s2768378.jpg',
+              description: '文化大革命如火如荼地进行，天文学家叶文洁在其间历经劫难，被带到军方绝秘基地红岸基地。在这里，叶文洁发现了地外文明三体人，并由此引发了地球文明与三体文明的战争。在三体人即将到达之前，人类面临着前所未有的危机，三体人带着他们先进的科学技术，在地球上开始了对人类的清洗...'
+            },
+            {
+              id: 4,
+              title: 'JavaScript高级程序设计（第4版）',
+              author: 'Matt Frisbie',
+              isbn: '9787115545381',
+              publisher: '人民邮电出版社',
+              publishDate: '2020-06-01',
+              category: '计算机',
+              location: 'A区-10排-4层',
+              totalCount: 8,
+              availableCount: 3,
+              status: '可借阅',
+              cover: 'https://img1.doubanio.com/view/subject/s/public/s33703494.jpg',
+              description: '本书是JavaScript经典图书的新版。第4版涵盖ECMAScript 2019，全面、深入地介绍了JavaScript开发者必须掌握的前端开发技术，涉及JavaScript的基础特性和高级特性。书中详尽讨论了JavaScript的各个方面，从JavaScript的起源开始，逐步讲解到新出现的技术，其中重点介绍ECMAScript和DOM标准。在此基础上，接下来的各章揭示了JavaScript的基本概念，包括类、期约、迭代器、代理，等等。另外，书中深入探讨了客户端检测、事件、表单、错误处理及JSON。本书同时也介绍了近几年来涌现的重要新规范，包括Fetch API、模块、工作者线程、服务线程以及大量新的API。'
+            },
+            {
+              id: 5,
+              title: '万历十五年',
+              author: '黄仁宇',
+              isbn: '9787108009821',
+              publisher: '生活·读书·新知三联书店',
+              publishDate: '1997-05-01',
+              category: '历史',
+              location: 'D区-7排-2层',
+              totalCount: 12,
+              availableCount: 0,
+              status: '借出',
+              cover: 'https://img2.doubanio.com/view/subject/s/public/s1790028.jpg',
+              description: '万历十五年，即公元1587年，在中国历史上原本是极其普通的年份，但在著名历史学家黄仁宇笔下，这一年却有着特殊的意义。作者以该年前后的大明王朝为背景，通过对明万历十五年前后政治、经济、文化等各方面的概括，刻画了晚明社会的危机全景图，并对这一历史时期作出了深刻的分析与解读。'
+            }
+          ],
+          bookDetailDialogVisible: false,
+          currentBook: {},
+          borrowTabActive: 'current',
+          currentBorrowList: [
+            {
+              id: 1,
+              bookTitle: '人工智能：一种现代方法（第4版）',
+              borrowDate: '2024-03-01',
+              dueDate: '2024-03-31',
+              remainingDays: 13,
+              renewCount: 0
+            },
+            {
+              id: 2,
+              bookTitle: 'JavaScript高级程序设计（第4版）',
+              borrowDate: '2024-02-15',
+              dueDate: '2024-03-16',
+              remainingDays: -2,
+              renewCount: 0
+            },
+            {
+              id: 3,
+              bookTitle: '算法导论（原书第3版）',
+              borrowDate: '2024-01-20',
+              dueDate: '2024-03-05',
+              remainingDays: -13,
+              renewCount: 1
+            }
+          ],
+          borrowHistoryList: [
+            {
+              id: 1,
+              bookTitle: '深入理解计算机系统（原书第3版）',
+              borrowDate: '2023-12-10',
+              returnDate: '2024-01-05',
+              status: '已还',
+              overdueDays: 0,
+              fine: 0
+            },
+            {
+              id: 2,
+              bookTitle: '代码整洁之道',
+              borrowDate: '2023-11-25',
+              returnDate: '2024-01-05',
+              status: '已还',
+              overdueDays: 10,
+              fine: 5.00
+            },
+            {
+              id: 3,
+              bookTitle: '设计模式：可复用面向对象软件的基础',
+              borrowDate: '2023-10-15',
+              returnDate: '2023-11-10',
+              status: '已还',
+              overdueDays: 0,
+              fine: 0
+            },
+            {
+              id: 4,
+              bookTitle: '重构：改善既有代码的设计',
+              borrowDate: '2023-09-20',
+              returnDate: '2023-10-15',
+              status: '已还',
+              overdueDays: 0,
+              fine: 0
+            }
+          ],
+          reservationList: [
+            {
+              id: 1,
+              bookTitle: '百年孤独',
+              reservationDate: '2024-03-05',
+              availableDate: '2024-03-20',
+              status: '等待中',
+              validDays: 15
+            },
+            {
+              id: 2,
+              bookTitle: '万历十五年',
+              reservationDate: '2024-02-28',
+              availableDate: '2024-03-15',
+              status: '可借阅',
+              validDays: 3
+            },
+            {
+              id: 3,
+              bookTitle: '围城',
+              reservationDate: '2024-01-25',
+              availableDate: '2024-02-10',
+              status: '已过期',
+              validDays: 0
+            }
+          ],
+          borrowForm: {
+            code: ''
+          },
+          returnForm: {
+            code: ''
+          },
+          bookDamageForm: {
+            status: 'normal',
+            description: ''
+          },
+          borrowPagination: {
+            currentPage: 1,
+            pageSize: 5,
+            total: 100
+          },
+          manageBookList: [
+            {
+              id: 1,
+              title: '人工智能：一种现代方法（第4版）',
+              author: 'Stuart Russell, Peter Norvig',
+              isbn: '9787302518287',
+              publisher: '清华大学出版社',
+              publishDate: '2021-03-01',
+              category: '计算机',
+              location: 'A区-12排-3层',
+              totalCount: 10,
+              availableCount: 5,
+              status: 'active',
+              cover: 'https://img3.doubanio.com/view/subject/s/public/s33549553.jpg',
+              description: '《人工智能：一种现代方法（第4版）》是最权威、最经典的人工智能教材，被全球1500多所大学用作教材，被译为12种语言，被誉为"AI圣经"。'
+            },
+            {
+              id: 2,
+              title: '百年孤独',
+              author: '加西亚·马尔克斯',
+              isbn: '9787544291170',
+              publisher: '南海出版公司',
+              publishDate: '2017-07-01',
+              category: '文学',
+              location: 'B区-5排-2层',
+              totalCount: 15,
+              availableCount: 0,
+              status: 'active',
+              cover: 'https://img2.doubanio.com/view/subject/s/public/s27237850.jpg',
+              description: '《百年孤独》是魔幻现实主义文学的代表作，描写了布恩迪亚家族七代人的传奇故事，以及加勒比海沿岸小镇马孔多的百年兴衰。'
+            },
+            {
+              id: 3,
+              title: '三体',
+              author: '刘慈欣',
+              isbn: '9787536692930',
+              publisher: '重庆出版社',
+              publishDate: '2008-01-01',
+              category: '科学',
+              location: 'C区-3排-1层',
+              totalCount: 20,
+              availableCount: 8,
+              status: 'active',
+              cover: 'https://img1.doubanio.com/view/subject/s/public/s2768378.jpg',
+              description: '文化大革命如火如荼地进行，天文学家叶文洁在其间历经劫难，被带到军方绝秘基地红岸基地。'
+            },
+            {
+              id: 4,
+              title: 'JavaScript高级程序设计（第4版）',
+              author: 'Matt Frisbie',
+              isbn: '9787115545381',
+              publisher: '人民邮电出版社',
+              publishDate: '2020-06-01',
+              category: '计算机',
+              location: 'A区-10排-4层',
+              totalCount: 8,
+              availableCount: 3,
+              status: 'active',
+              cover: 'https://img1.doubanio.com/view/subject/s/public/s33703494.jpg',
+              description: '本书是JavaScript经典图书的新版。第4版涵盖ECMAScript 2019，全面、深入地介绍了JavaScript开发者必须掌握的前端开发技术。'
+            },
+            {
+              id: 5,
+              title: '万历十五年',
+              author: '黄仁宇',
+              isbn: '9787108009821',
+              publisher: '生活·读书·新知三联书店',
+              publishDate: '1997-05-01',
+              category: '历史',
+              location: 'D区-7排-2层',
+              totalCount: 12,
+              availableCount: 0,
+              status: 'inactive',
+              cover: 'https://img2.doubanio.com/view/subject/s/public/s1790028.jpg',
+              description: '万历十五年，即公元1587年，在中国历史上原本是极其普通的年份，但在著名历史学家黄仁宇笔下，这一年却有着特殊的意义。'
+            }
+          ],
+          categoryTree: [
+            {
+              id: 1,
+              name: '文学',
+              code: 'literature',
+              count: 56,
+              parentId: 0,
+              parentName: '无',
+              description: '文学类图书',
+              children: [
+                {
+                  id: 11,
+                  name: '小说',
+                  code: 'novel',
+                  count: 32,
+                  parentId: 1,
+                  parentName: '文学',
+                  description: '小说类图书'
+                },
+                {
+                  id: 12,
+                  name: '诗歌',
+                  code: 'poetry',
+                  count: 15,
+                  parentId: 1,
+                  parentName: '文学',
+                  description: '诗歌类图书'
+                },
+                {
+                  id: 13,
+                  name: '散文',
+                  code: 'prose',
+                  count: 9,
+                  parentId: 1,
+                  parentName: '文学',
+                  description: '散文类图书'
+                }
+              ]
+            },
+            {
+              id: 2,
+              name: '科学',
+              code: 'science',
+              count: 38,
+              parentId: 0,
+              parentName: '无',
+              description: '科学类图书',
+              children: [
+                {
+                  id: 21,
+                  name: '物理',
+                  code: 'physics',
+                  count: 12,
+                  parentId: 2,
+                  parentName: '科学',
+                  description: '物理类图书'
+                },
+                {
+                  id: 22,
+                  name: '化学',
+                  code: 'chemistry',
+                  count: 10,
+                  parentId: 2,
+                  parentName: '科学',
+                  description: '化学类图书'
+                },
+                {
+                  id: 23,
+                  name: '生物',
+                  code: 'biology',
+                  count: 16,
+                  parentId: 2,
+                  parentName: '科学',
+                  description: '生物类图书'
+                }
+              ]
+            },
+            {
+              id: 3,
+              name: '计算机',
+              code: 'computer',
+              count: 45,
+              parentId: 0,
+              parentName: '无',
+              description: '计算机类图书',
+              children: [
+                {
+                  id: 31,
+                  name: '编程语言',
+                  code: 'programming',
+                  count: 20,
+                  parentId: 3,
+                  parentName: '计算机',
+                  description: '编程语言类图书'
+                },
+                {
+                  id: 32,
+                  name: '数据库',
+                  code: 'database',
+                  count: 8,
+                  parentId: 3,
+                  parentName: '计算机',
+                  description: '数据库类图书'
+                },
+                {
+                  id: 33,
+                  name: '网络安全',
+                  code: 'security',
+                  count: 7,
+                  parentId: 3,
+                  parentName: '计算机',
+                  description: '网络安全类图书'
+                },
+                {
+                  id: 34,
+                  name: '人工智能',
+                  code: 'ai',
+                  count: 10,
+                  parentId: 3,
+                  parentName: '计算机',
+                  description: '人工智能类图书'
+                }
+              ]
+            }
+          ],
+          categoryList: [
+            {
+              id: 1,
+              name: '文学',
+              code: 'literature',
+              count: 56,
+              parentId: 0,
+              parentName: '无',
+              description: '文学类图书'
+            },
+            {
+              id: 11,
+              name: '小说',
+              code: 'novel',
+              count: 32,
+              parentId: 1,
+              parentName: '文学',
+              description: '小说类图书'
+            },
+            {
+              id: 12,
+              name: '诗歌',
+              code: 'poetry',
+              count: 15,
+              parentId: 1,
+              parentName: '文学',
+              description: '诗歌类图书'
+            },
+            {
+              id: 13,
+              name: '散文',
+              code: 'prose',
+              count: 9,
+              parentId: 1,
+              parentName: '文学',
+              description: '散文类图书'
+            },
+            {
+              id: 2,
+              name: '科学',
+              code: 'science',
+              count: 38,
+              parentId: 0,
+              parentName: '无',
+              description: '科学类图书'
+            },
+            {
+              id: 3,
+              name: '计算机',
+              code: 'computer',
+              count: 45,
+              parentId: 0,
+              parentName: '无',
+              description: '计算机类图书'
+            },
+            {
+              id: 31,
+              name: '编程语言',
+              code: 'programming',
+              count: 20,
+              parentId: 3,
+              parentName: '计算机',
+              description: '编程语言类图书'
+            },
+            {
+              id: 34,
+              name: '人工智能',
+              code: 'ai',
+              count: 10,
+              parentId: 3,
+              parentName: '计算机',
+              description: '人工智能类图书'
+            }
+          ],
+          manageBookPagination: {
+            currentPage: 1,
+            pageSize: 10,
+            total: 100
+          },
+          bookManageSearchForm: {
+            keyword: '',
+            category: '',
+            status: ''
+          },
+          bookDialogVisible: false,
+          bookForm: {
+            title: '',
+            isbn: '',
+            author: '',
+            publisher: '',
+            publishDate: '',
+            category: '',
+            totalCount: 0,
+            location: '',
+            description: '',
+            cover: ''
+          },
+          bookRules: {
+            title: [
+              { required: true, message: '请输入书名', trigger: 'blur' }
+            ],
+            isbn: [
+              { required: true, message: '请输入ISBN', trigger: 'blur' }
+            ],
+            author: [
+              { required: true, message: '请输入作者', trigger: 'blur' }
+            ],
+            publisher: [
+              { required: true, message: '请输入出版社', trigger: 'blur' }
+            ],
+            publishDate: [
+              { required: true, message: '请选择出版日期', trigger: 'change' }
+            ],
+            category: [
+              { required: true, message: '请选择分类', trigger: 'change' }
+            ],
+            totalCount: [
+              { required: true, message: '请输入馆藏数量', trigger: 'blur' }
+            ],
+            location: [
+              { required: true, message: '请输入馆藏位置', trigger: 'blur' }
+            ]
+          },
+          categoryDialogVisible: false,
+          categoryForm: {
+            name: '',
+            code: '',
+            parentId: 0,
+            description: ''
+          },
+          categoryRules: {
+            name: [
+              { required: true, message: '请输入分类名称', trigger: 'blur' }
+            ],
+            code: [
+              { required: true, message: '请输入分类代码', trigger: 'blur' }
+            ]
+          },
+          selectedBooks: [],
+          defaultProps: {
+            children: 'children',
+            label: 'name'
+          },
+          categoryOptions: [],
+          selectedBooks: []
+        }
+      },
+      methods: {
+        // 登录/注册相关方法
+        handleLogin() {
+          this.$refs.loginForm.validate((valid) => {
+            if (valid) {
+              this.$message.success('登录成功');
+            } else {
+              return false;
+            }
+          });
+        },
+        handleRegister() {
+          this.$refs.registerForm.validate((valid) => {
+            if (valid) {
+              this.$message.success('注册成功');
+            } else {
+              return false;
+            }
+          });
+        },
+
+        // 图书搜索相关方法
+        handleSearch() {
+          this.$message.success(`正在搜索关键词: ${this.searchForm.keyword}, 类型: ${this.searchForm.searchType}`);
+          // 这里应该是实际的搜索逻辑
+        },
+        handleAdvancedSearch() {
+          this.$message.success('正在执行高级搜索');
+          console.log(this.advancedSearchForm);
+          // 这里应该是实际的高级搜索逻辑
+        },
+        resetAdvancedSearchForm() {
+          this.advancedSearchForm = {
+            title: '',
+            author: '',
+            isbn: '',
+            publisher: '',
+            category: '',
+            publishDateRange: '',
+            status: 'all'
+          };
+        },
+        handleSizeChange(val) {
+          this.pagination.pageSize = val;
+          // 重新加载数据
+        },
+        handleCurrentChange(val) {
+          this.pagination.currentPage = val;
+          // 重新加载数据
+        },
+        viewBookDetail(book) {
+          this.currentBook = { ...book };
+          this.bookDetailDialogVisible = true;
+        },
+        handleBorrow(book) {
+          this.$confirm(`确定借阅《${book.title}》吗?`, '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            this.$message({
+              type: 'success',
+              message: `《${book.title}》借阅成功!`
+            });
+          }).catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消借阅'
+            });
+          });
+        },
+        handleReserve(book) {
+          this.$confirm(`此书已借出，确定预约《${book.title}》吗?`, '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            this.$message({
+              type: 'success',
+              message: `《${book.title}》预约成功!`
+            });
+          }).catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消预约'
+            });
+          });
+        },
+        getStatusType(status) {
+          switch (status) {
+            case '可借阅':
+              return 'success';
+            case '借出':
+              return 'danger';
+            case '预约中':
+              return 'warning';
+            default:
+              return 'info';
+          }
+        },
+        handleBorrowSizeChange(val) {
+          this.borrowPagination.pageSize = val;
+          // 重新加载数据
+        },
+        handleBorrowCurrentChange(val) {
+          this.borrowPagination.currentPage = val;
+          // 重新加载数据
+        },
+        handleScanBorrow() {
+          // 实现扫码借书逻辑
+        },
+        handleScanReturn() {
+          // 实现扫码还书逻辑
+        },
+        handleBorrowReserved(book) {
+          // 实现借阅已预约的图书逻辑
+        },
+        handleCancelReservation(book) {
+          // 实现取消预约逻辑
+        },
+        getRemainingDaysType(remainingDays) {
+          if (remainingDays > 15) return 'warning';
+          if (remainingDays > 0) return 'info';
+          return 'danger';
+        },
+        getBorrowStatusType(status) {
+          if (status === '借出') return 'danger';
+          return 'info';
+        },
+        getReservationStatusType(status) {
+          if (status === '已过期') return 'danger';
+          return 'info';
+        },
+        handleRenew(record) {
+          // 实现续借逻辑
+        },
+        handleReturn(record) {
+          // 实现归还逻辑
+        },
+        handleAddBook() {
+          this.bookForm = {
+            title: '',
+            isbn: '',
+            author: '',
+            publisher: '',
+            publishDate: '',
+            category: '',
+            totalCount: 0,
+            location: '',
+            description: '',
+            cover: ''
+          };
+          this.bookDialogVisible = true;
+        },
+        handleBatchDelete() {
+          if (this.selectedBooks.length === 0) {
+            this.$message.warning('请选择要下架的图书');
+            return;
+          }
+          const bookNames = this.selectedBooks.map(book => book.title).join('、');
+          this.$confirm(`确定要下架以下图书吗？<br>${bookNames}`, '提示', {
+            dangerouslyUseHTMLString: true,
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            this.selectedBooks.forEach(book => {
+              book.status = 'inactive';
+            });
+            this.$message.success('批量下架成功');
+            this.selectedBooks = [];
+          }).catch(() => { });
+        },
+        handleSearchBooks() {
+          this.$message.success('搜索图书成功');
+          // 实际应用中这里会调用API进行搜索
+        },
+        resetBookManageSearchForm() {
+          this.bookManageSearchForm = {
+            keyword: '',
+            category: '',
+            status: ''
+          };
+        },
+        handleSelectionChange(selection) {
+          this.selectedBooks = selection;
+        },
+        handleStatusChange(book) {
+          const statusText = book.status === 'active' ? '上架' : '下架';
+          this.$message.success(`图书《${book.title}》已${statusText}`);
+        },
+        handleEditBook(book) {
+          this.bookForm = JSON.parse(JSON.stringify(book));
+          this.bookDialogVisible = true;
+        },
+        handleDeleteBook(book) {
+          this.$confirm(`确定要下架图书《${book.title}》吗?`, '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            book.status = 'inactive';
+            this.$message.success(`图书《${book.title}》已下架`);
+          }).catch(() => { });
+        },
+        handleAddCategory() {
+          this.categoryForm = {
+            name: '',
+            code: '',
+            parentId: 0,
+            description: ''
+          };
+          this.categoryDialogVisible = true;
+        },
+        handleAddSubCategory(category) {
+          this.categoryForm = {
+            name: '',
+            code: '',
+            parentId: category.id,
+            description: ''
+          };
+          this.categoryDialogVisible = true;
+        },
+        handleEditCategory(category) {
+          this.categoryForm = JSON.parse(JSON.stringify(category));
+          this.categoryDialogVisible = true;
+        },
+        handleRemoveCategory(node, category) {
+          // 检查是否有子分类
+          if (category.children && category.children.length > 0) {
+            this.$message.error('该分类下还有子分类，无法删除');
+            return;
+          }
+
+          // 检查是否有图书
+          if (category.count > 0) {
+            this.$message.error('该分类下还有图书，无法删除');
+            return;
+          }
+
+          this.$confirm(`确定要删除分类《${category.name}》吗?`, '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            // 实际应用中这里会调用API删除分类
+            // 模拟删除
+            if (node.parent.data.children) {
+              const index = node.parent.data.children.findIndex(d => d.id === category.id);
+              if (index !== -1) {
+                node.parent.data.children.splice(index, 1);
+              }
+            }
+
+            // 同时从列表中删除
+            const listIndex = this.categoryList.findIndex(d => d.id === category.id);
+            if (listIndex !== -1) {
+              this.categoryList.splice(listIndex, 1);
+            }
+
+            this.$message.success('删除成功');
+          }).catch(() => { });
+        },
+        handleRemoveCategoryFromTable(category) {
+          // 与树形结构中的删除逻辑相同
+          // 检查是否有子分类
+          const hasChildren = this.categoryList.some(item => item.parentId === category.id);
+          if (hasChildren) {
+            this.$message.error('该分类下还有子分类，无法删除');
+            return;
+          }
+
+          // 检查是否有图书
+          if (category.count > 0) {
+            this.$message.error('该分类下还有图书，无法删除');
+            return;
+          }
+
+          this.$confirm(`确定要删除分类《${category.name}》吗?`, '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            // 从树形结构中删除
+            const removeFromTree = (tree, id) => {
+              for (let i = 0; i < tree.length; i++) {
+                if (tree[i].id === id) {
+                  tree.splice(i, 1);
+                  return true;
+                }
+                if (tree[i].children && tree[i].children.length) {
+                  if (removeFromTree(tree[i].children, id)) {
+                    return true;
+                  }
+                }
+              }
+              return false;
+            };
+
+            removeFromTree(this.categoryTree, category.id);
+
+            // 从列表中删除
+            const index = this.categoryList.findIndex(d => d.id === category.id);
+            if (index !== -1) {
+              this.categoryList.splice(index, 1);
+            }
+
+            this.$message.success('删除成功');
+          }).catch(() => { });
+        },
+        handleManageBookSizeChange(val) {
+          this.manageBookPagination.pageSize = val;
+          // 重新加载数据
+        },
+        handleManageBookCurrentChange(val) {
+          this.manageBookPagination.currentPage = val;
+          // 重新加载数据
+        },
+        handleAvatarSuccess(response, file) {
+          // 模拟上传成功后设置图片URL
+          this.bookForm.cover = URL.createObjectURL(file.raw);
+          this.$message.success('上传成功');
+        },
+        beforeAvatarUpload(file) {
+          const isJPG = file.type === 'image/jpeg' || file.type === 'image/png';
+          const isLt2M = file.size / 1024 / 1024 < 2;
+
+          if (!isJPG) {
+            this.$message.error('上传图片只能是 JPG 或 PNG 格式!');
+          }
+          if (!isLt2M) {
+            this.$message.error('上传图片大小不能超过 2MB!');
+          }
+
+          return isJPG && isLt2M;
+        },
+        submitBookForm() {
+          this.$refs.bookForm.validate((valid) => {
+            if (valid) {
+              if (this.bookForm.id) {
+                // 编辑图书
+                // 实际应用中这里会调用API保存数据
+                // 模拟更新
+                const index = this.manageBookList.findIndex(book => book.id === this.bookForm.id);
+                if (index !== -1) {
+                  // 保留状态和可借数量字段
+                  const originalStatus = this.manageBookList[index].status;
+                  const availableCount = this.bookForm.totalCount - (this.manageBookList[index].totalCount - this.manageBookList[index].availableCount);
+
+                  this.manageBookList.splice(index, 1, {
+                    ...this.bookForm,
+                    status: originalStatus,
+                    availableCount: Math.max(0, availableCount)
+                  });
+
+                  this.$message.success('编辑成功');
+                }
+              } else {
+                // 新增图书
+                // 实际应用中这里会调用API保存数据
+                // 模拟新增
+                const newId = Math.max(...this.manageBookList.map(book => book.id)) + 1;
+                this.manageBookList.push({
+                  ...this.bookForm,
+                  id: newId,
+                  status: 'active',
+                  availableCount: this.bookForm.totalCount
+                });
+
+                this.$message.success('添加成功');
+              }
+
+              this.bookDialogVisible = false;
+            } else {
+              return false;
+            }
+          });
+        },
+        submitCategoryForm() {
+          this.$refs.categoryForm.validate((valid) => {
+            if (valid) {
+              if (this.categoryForm.id) {
+                // 编辑分类
+                // 实际应用中这里会调用API保存数据
+                // 模拟更新列表中的数据
+                const index = this.categoryList.findIndex(cat => cat.id === this.categoryForm.id);
+                if (index !== -1) {
+                  // 保留统计数据
+                  const originalCount = this.categoryList[index].count;
+                  this.categoryList.splice(index, 1, {
+                    ...this.categoryForm,
+                    count: originalCount,
+                    parentName: this.categoryForm.parentId === 0 ? '无' : this.categoryList.find(cat => cat.id === this.categoryForm.parentId)?.name || '未知'
+                  });
+                }
+
+                // 更新树形结构中的数据
+                const updateTree = (tree, category) => {
+                  for (let i = 0; i < tree.length; i++) {
+                    if (tree[i].id === category.id) {
+                      // 保留子节点和统计数据
+                      const originalChildren = tree[i].children;
+                      const originalCount = tree[i].count;
+                      tree[i] = {
+                        ...category,
+                        children: originalChildren,
+                        count: originalCount,
+                        parentName: category.parentId === 0 ? '无' : this.categoryList.find(cat => cat.id === category.parentId)?.name || '未知'
+                      };
+                      return true;
+                    }
+                    if (tree[i].children && tree[i].children.length) {
+                      if (updateTree(tree[i].children, category)) {
+                        return true;
+                      }
+                    }
+                  }
+                  return false;
+                };
+
+                updateTree(this.categoryTree, this.categoryForm);
+
+                this.$message.success('编辑成功');
+              } else {
+                // 新增分类
+                // 实际应用中这里会调用API保存数据
+                // 模拟新增
+                const newId = Math.max(...this.categoryList.map(cat => cat.id)) + 1;
+                const newCategory = {
+                  ...this.categoryForm,
+                  id: newId,
+                  count: 0,
+                  parentName: this.categoryForm.parentId === 0 ? '无' : this.categoryList.find(cat => cat.id === this.categoryForm.parentId)?.name || '未知'
+                };
+
+                this.categoryList.push(newCategory);
+
+                // 如果是顶级分类，直接添加到树的顶层
+                if (this.categoryForm.parentId === 0) {
+                  this.categoryTree.push({
+                    ...newCategory,
+                    children: []
+                  });
+                } else {
+                  // 如果是子分类，添加到父分类的children中
+                  const addToParent = (tree, parentId, newNode) => {
+                    for (let i = 0; i < tree.length; i++) {
+                      if (tree[i].id === parentId) {
+                        if (!tree[i].children) {
+                          tree[i].children = [];
+                        }
+                        tree[i].children.push(newNode);
+                        return true;
+                      }
+                      if (tree[i].children && tree[i].children.length) {
+                        if (addToParent(tree[i].children, parentId, newNode)) {
+                          return true;
+                        }
+                      }
+                    }
+                    return false;
+                  };
+
+                  addToParent(this.categoryTree, this.categoryForm.parentId, {
+                    ...newCategory,
+                    children: []
+                  });
+                }
+
+                this.$message.success('添加成功');
+              }
+
+              this.categoryDialogVisible = false;
+            } else {
+              return false;
+            }
+          });
+        }
+      }
+    })
+  </script>
+</body>
+
+</html>
